@@ -17,28 +17,33 @@ function createMarkup(galleryItems) {
     }).join('');
 };
 
-
 galleryElements.addEventListener('click', onImageClick);
 
 function onImageClick(event) {
     event.preventDefault();
-
-    openModal(event);
-    closeModalEsc();
+    if (event.target.nodeName !== "IMG") {
+        return;
+    }
+    createBasicLightbox(event.target);
+    openModal(instance);
 };
 
-function openModal(event) {
+function createBasicLightbox(img) {
     instance = basicLightbox.create(`
-    <img src="${event.target.dataset.source}" width="800" height="600">`);
-
-    instance.show();
+    <img src="${img.getAttribute('data-source')}" width="800" height="600">`);
 };
 
-function closeModalEsc() {
-    document.addEventListener("keydown", event => {
-        if (event.code !== 'Escape') {
-            return;
-        }
-        instance.close();
-    });
+function openModal() {
+    instance.show();
+
+    window.addEventListener('keydown', closeModalEsc)
+};
+
+function closeModalEsc(event) {
+    if (event.code !== 'Escape') {
+        return;
+    }
+    instance.close();
+
+    window.removeEventListener('keydown', closeModalEsc);
 };
